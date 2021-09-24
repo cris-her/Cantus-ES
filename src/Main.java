@@ -54,7 +54,7 @@ class Main {
         ArrayList<Integer> filteredN = new ArrayList<Integer>();
         for (int i = 0; i < intervals.size(); i++) {
             if (i == 0) {
-                filteredN.add(intervals.get(i));
+                filteredN.add(0);
             } else {
                 filteredN.add(intervals.get(i)-intervals.get(i-1));
             }
@@ -110,7 +110,44 @@ class Main {
     }
 
     //between_two_and_four_leaps
+    static ArrayList<Integer> BetweenTwoAndFourLeaps(ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
+        long count = RelativeIntervals.stream().filter(c -> Math.abs(c) > 4).count();
+        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(cMajorNotes,cantus);
+        System.out.println("Count: " + count);
+
+        if (count > 2) {
+            for (int i = 0; i < cMajorNotes.size(); i++) {
+                if (Math.abs(AbsoluteIntervals.get(i)) < 3) {
+                    filteredC.add(cMajorNotes.get(i));
+                }
+            }
+        } else if (count == 2){
+            for (int i = 0; i < cMajorNotes.size(); i++) {
+                if (Math.abs(AbsoluteIntervals.get(i)) <= 3) {
+                    filteredC.add(cMajorNotes.get(i));
+                }
+            }
+        } else {
+            filteredC = cMajorNotes;
+        }
+
+        return filteredC;
+    }
+
     //has_climax
+    static ArrayList<Integer> HasUniqueClimax(ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        Integer max = Collections.max(cantus);
+        System.out.println("Max: " + max);
+        for (int i = 0; i < cMajorNotes.size(); i++) {
+            if (cMajorNotes.get(i) != max) {
+                filteredC.add(cMajorNotes.get(i));
+            }
+        }
+        return filteredC;
+    }
     //changes_direction_several_times
     //no_note_repeated_too_often
     //final_note_approached_by_step
@@ -129,7 +166,31 @@ class Main {
         }
         return filteredC;
     }
+
     //larger_leaps_followed_by_change_of_direction
+    static ArrayList<Integer> LargerLeapsFollowedByChangeOfDirection(ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
+
+        if (RelativeIntervals.get(RelativeIntervals.size()-1) > 4) {
+            for (int i = 0; i < cMajorNotes.size(); i++) {
+                if (cMajorNotes.get(i) < cantus.get(cantus.size() - 1)) {
+                    filteredC.add(cMajorNotes.get(i));
+                }
+            }
+        }else if (RelativeIntervals.get(RelativeIntervals.size()-1) < -4){
+            for (int i = 0; i < cMajorNotes.size(); i++) {
+                if (cMajorNotes.get(i) > cantus.get(cantus.size() - 1)) {
+                    filteredC.add(cMajorNotes.get(i));
+                }
+            }
+        } else {
+            filteredC = cMajorNotes;
+        }
+
+        return filteredC;
+    }
+
     //leading_note_goes_to_tonic
     static ArrayList<Integer> LeadingNoteGoesToTonic(ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
@@ -146,9 +207,33 @@ class Main {
     //no_same_two_intervals_in_a_row
     //no_noodling
     //no_long_runs
+    static ArrayList<Integer> NoLongRuns(ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
+        if (cantus.size() >= 5) {
+            if (RelativeIntervals.get(RelativeIntervals.size()-1) >= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-2) >= 0 && RelativeIntervals.get(RelativeIntervals.size()-3) >= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-4) >= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-5) >= 0 ) {
+                for (int i = 0; i < cMajorNotes.size(); i++) {
+                    if (cMajorNotes.get(i) < cantus.get(cantus.size() - 1)) {
+                        filteredC.add(cMajorNotes.get(i));
+                    }
+                }
+            }else if (RelativeIntervals.get(RelativeIntervals.size()-1) <= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-2) <= 0 && RelativeIntervals.get(RelativeIntervals.size()-3) <= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-4) <= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-5) <= 0 ){
+                for (int i = 0; i < cMajorNotes.size(); i++) {
+                    if (cMajorNotes.get(i) > cantus.get(cantus.size() - 1)) {
+                        filteredC.add(cMajorNotes.get(i));
+                    }
+                }
+            } else {
+                filteredC = cMajorNotes;
+            }
+        } else {
+            filteredC = cMajorNotes;
+        }
+
+        return filteredC;
+    }
     //no_unresolved_melodic_tension
     //no_sequences
-    //
 
     public static ArrayList<Integer> majorIntervals = new ArrayList<Integer>(Arrays.asList(0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19));
 
@@ -159,7 +244,8 @@ class Main {
 
     public static void main(String[] args) {
         //int[] input = {60, 62, 64, 60};
-        ArrayList<Integer> input = new ArrayList<Integer>(Arrays.asList(0, 2, 4, 5, 7, 9));
+        ArrayList<Integer> input = new ArrayList<Integer>(Arrays.asList(12, 11, 9, 7, 5, 4));
+        System.out.println("Cantus: " + input);
         int cantusSize = 8;
         // selected c major scale, transposed to c major then back to original
         ArrayList<Integer> ScaleNotes = GetScaleNotes(majorIntervals);
@@ -184,7 +270,19 @@ class Main {
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = LeadingNoteGoesToTonic(input);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
 
-        ArrayList<Integer> FinalNoteApproachedByStep = FinalNoteApproachedByStep(input, 0);
-        System.out.println("FinalNoteApproachedByStep: " + FinalNoteApproachedByStep);
+        ArrayList<Integer> FinalNoteApproachedByStepNotes = FinalNoteApproachedByStep(input, 0);
+        System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
+
+        ArrayList<Integer> HasUniqueClimaxNotes = HasUniqueClimax(input);
+        System.out.println("HasUniqueClimaxNotes: " + HasUniqueClimaxNotes);
+
+        ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = LargerLeapsFollowedByChangeOfDirection(input);
+        System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
+
+        ArrayList<Integer> BetweenTwoAndFourLeapsNotes = BetweenTwoAndFourLeaps(input);
+        System.out.println("BetweenTwoAndFourLeapsNotes: " + BetweenTwoAndFourLeapsNotes);
+
+        ArrayList<Integer> NoLongRunsNotes = NoLongRuns(input);
+        System.out.println("NoLongRunsNotes: " + NoLongRunsNotes);
     }
 }
