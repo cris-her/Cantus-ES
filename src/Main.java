@@ -71,11 +71,23 @@ class Main {
         return filteredN;
     }
 
+    // "R U L E S"
     static ArrayList<Integer> NoRepetition(ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
         int last = cantus.get(cantus.size() - 1);
         for (int i = 0; i < cMajorNotes.size(); i++) {
             if (cMajorNotes.get(i) != last) {
+                filteredC.add(cMajorNotes.get(i));
+            }
+        }
+        return filteredC;
+    }
+
+    static ArrayList<Integer> NoLeapsLargerThanOctave(ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(cMajorNotes,cantus);
+        for (int i = 0; i < cMajorNotes.size(); i++) {
+            if (Math.abs(AbsoluteIntervals.get(i)) <= 12) {
                 filteredC.add(cMajorNotes.get(i));
             }
         }
@@ -97,17 +109,58 @@ class Main {
         return filteredC;
     }
 
+    //between_two_and_four_leaps
+    //has_climax
+    //changes_direction_several_times
+    //no_note_repeated_too_often
+    //final_note_approached_by_step
+    static ArrayList<Integer> FinalNoteApproachedByStep(ArrayList<Integer> cantus, int lastNote) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+
+        if (cantusSize - 2 == cantus.size()) {
+            if (lastNote == 0) {
+                filteredC.add(2);
+            } else {
+                filteredC.add(11);
+                filteredC.add(14);
+            }
+        } else {
+            filteredC = cMajorNotes;
+        }
+        return filteredC;
+    }
+    //larger_leaps_followed_by_change_of_direction
+    //leading_note_goes_to_tonic
+    static ArrayList<Integer> LeadingNoteGoesToTonic(ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        int last = cantus.get(cantus.size() - 1);
+
+        if (last == 11) {
+            filteredC.add(12);
+        } else {
+            filteredC = cMajorNotes;
+        }
+        return filteredC;
+    }
+    //no_more_than_two_consecutive_leaps_in_same_direction
+    //no_same_two_intervals_in_a_row
+    //no_noodling
+    //no_long_runs
+    //no_unresolved_melodic_tension
+    //no_sequences
+    //
+
     public static ArrayList<Integer> majorIntervals = new ArrayList<Integer>(Arrays.asList(0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19));
 
     public static ArrayList<Integer> cMajorNotes = new ArrayList<Integer>(Arrays.asList(0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19));
 
-    public static int[] majorInt = {0, 2, 4, 5, 7, 9, 11};
+    public static int cantusSize = 8;
     //Scale cMajor = new Scale(0, majorIntervals);
 
     public static void main(String[] args) {
         //int[] input = {60, 62, 64, 60};
-        ArrayList<Integer> input = new ArrayList<Integer>(Arrays.asList(0, 5, 0));
-
+        ArrayList<Integer> input = new ArrayList<Integer>(Arrays.asList(0, 2, 4, 5, 7, 9));
+        int cantusSize = 8;
         // selected c major scale, transposed to c major then back to original
         ArrayList<Integer> ScaleNotes = GetScaleNotes(majorIntervals);
         System.out.println("ScaleNotes: " + ScaleNotes);
@@ -124,5 +177,14 @@ class Main {
 
         ArrayList<Integer> NonDissonantLeapsNotes = NoDissonantLeaps(input);
         System.out.println("NonDissonantLeapsNotes: " + NonDissonantLeapsNotes);
+
+        ArrayList<Integer> NonLeapsLargerThanOctaveNotes = NoLeapsLargerThanOctave(input);
+        System.out.println("NonLeapsLargerThanOctaveNotes: " + NonLeapsLargerThanOctaveNotes);
+
+        ArrayList<Integer> LeadingNoteGoesToTonicNotes = LeadingNoteGoesToTonic(input);
+        System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
+
+        ArrayList<Integer> FinalNoteApproachedByStep = FinalNoteApproachedByStep(input, 0);
+        System.out.println("FinalNoteApproachedByStep: " + FinalNoteApproachedByStep);
     }
 }
