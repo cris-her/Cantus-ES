@@ -1,6 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.MidiChannel;
@@ -14,49 +14,12 @@ import javax.sound.midi.MidiChannel;
  */
 public class Synth {
 
-    private static List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
-    private static MidiChannel[] channels;
-    private static int INSTRUMENT = 0; // 0 is a piano, 9 is percussion, other channels are for other instruments
-    private static int VOLUME = 80; // between 0 et 127
+    private List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
+    private MidiChannel[] channels;
+    private int INSTRUMENT = 0; // 0 is a piano, 9 is percussion, other channels are for other instruments
+    private int VOLUME = 80; // between 0 et 127
 
-    public static void main( String[] args ) {
-
-        try {
-            // * Open a synthesizer
-            Synthesizer synth = MidiSystem.getSynthesizer();
-            synth.open();
-            channels = synth.getChannels();
-
-            // * Play some notes
-            play("6D",  1000);
-            rest(500);
-
-            play("6D",  300);
-            play("6C#", 300);
-            play("6D",  1000);
-            rest(500);
-
-            play("6D",  300);
-            play("6C#", 300);
-            play("6D",  1000);
-            play("6E",  300);
-            play("6E",  600);
-            play("6G",  300);
-            play("6G",  600);
-            rest(500);
-
-            // * finish up
-            synth.close();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Plays the given note for the given duration
-     */
-    public static void play(String note, int duration) throws InterruptedException
+    public void play(String note, int duration) throws InterruptedException
     {
         // * start playing a note
         channels[INSTRUMENT].noteOn(id(note), VOLUME );
@@ -66,21 +29,37 @@ public class Synth {
         channels[INSTRUMENT].noteOff(id(note));
     }
 
-    /**
-     * Plays nothing for the given duration
-     */
-    private static void rest(int duration) throws InterruptedException
+    private void rest(int duration) throws InterruptedException
     {
         Thread.sleep(duration);
     }
 
-    /**
-     * Returns the MIDI id for a given note: eg. 4C -> 60
-     * @return
-     */
-    private static int id(String note)
+    private int id(String note)
     {
         int octave = Integer.parseInt(note.substring(0, 1));
         return notes.indexOf(note.substring(1)) + 12 * octave + 12;
+    }
+
+    public Synth(ArrayList<String> notesToPlay)
+    {
+        try {
+            // * Open a synthesizer
+            Synthesizer synth = MidiSystem.getSynthesizer();
+            synth.open();
+            channels = synth.getChannels();
+            for (int i = 0; i < notesToPlay.size(); i++) {
+                play(notesToPlay.get(i),  1000);
+            }
+            synth.close();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void main( String[] args ) {
+        ArrayList<String> notes = new ArrayList<String>(Arrays.asList("6D","6C#","6E","6G"));
+        Synth sth = new Synth(notes);
     }
 }
