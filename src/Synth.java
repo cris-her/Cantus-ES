@@ -36,8 +36,15 @@ public class Synth {
 
     private int id(String note)
     {
-        int octave = Integer.parseInt(note.substring(0, 1));
+        int octave = Integer.parseInt(note.substring(0, 1));//4C
         return notes.indexOf(note.substring(1)) + 12 * octave + 12;
+    }
+
+    private String note(int id)
+    {
+        int octave = (id - 12) / 12;
+        String note = notes.get( (id - 12) % 12 );
+        return octave + note;
     }
 
     public Synth(ArrayList<String> notesToPlay)
@@ -59,7 +66,9 @@ public class Synth {
     }
 
     public static void main( String[] args ) {
-        ArrayList<String> notes = new ArrayList<String>(Arrays.asList("6D","6C#","6E","6G"));
+        ArrayList<String> notes = new ArrayList<String>(Arrays.asList("4F"));
         Synth sth = new Synth(notes);
+        System.out.println(sth.id("4F"));
+        System.out.println(sth.note(65));
     }
 }

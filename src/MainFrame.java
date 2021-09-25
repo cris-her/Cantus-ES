@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -21,18 +19,22 @@ public class MainFrame extends JFrame {
     private JButton btn1;
     private JButton btn5;
     private JButton btn6;
-    private JButton btn7;
     private JButton btn8;
     private JButton btn9;
     private JButton btn10;
     private JButton btn11;
     private JButton btn12;
+    private JButton btn13;
     private JLabel cantusLabel;
+    private JButton btn7;
+    private JButton btn;
+    private JButton btn14;
+    private JButton btn15;
 
     public MainFrame(){
         setContentPane(mainPanel);
         setTitle("Cantus firmus - Sistema experto");
-        setSize(650, 400);
+        setSize(900, 400);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -64,11 +66,19 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //String.valueOf(Math.random())
-                ArrayList<String> notes = new ArrayList<String>(Arrays.asList("C","D","E","F","G","A","B","C","D","E","F","G"));
-                ArrayList<JButton> JButtons = new ArrayList<JButton>(Arrays.asList(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12));
+                //ArrayList<String> notes = new ArrayList<String>(Arrays.asList("C","D","E","F","G","A","B","C","D","E","F","G","Z", "X", "Y"));
+                String value = escalaComboBox.getSelectedItem().toString();
+                System.out.println(value);
+                Cantus cantus=new Cantus();
+                ArrayList<Integer> ScaleNoteNumbers = cantus.GetScaleNotes(value);
+                System.out.println("ScaleNotes: " + ScaleNoteNumbers);
+                ArrayList<String> ScaleNoteNames =  cantus.GetNoteNames(ScaleNoteNumbers);
+                System.out.println("ScaleNotes: " + ScaleNoteNames );
+
+                ArrayList<JButton> JButtons = new ArrayList<JButton>(Arrays.asList(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15));
 
                 for (int i = 0; i < JButtons.size(); i++) {
-                    JButtons.get(i).setText(notes.get(i));
+                    JButtons.get(i).setText(ScaleNoteNames.get(i));
                 }
 
             }
@@ -80,13 +90,22 @@ public class MainFrame extends JFrame {
         for (int i = 8; i <= 16; i++) {
             CantusFrame.longitudComboBox.addItem(i);
         }
-        ArrayList<String> notes = new ArrayList<String>(Arrays.asList("C","D","E","F","G","A","B"));
+        ArrayList<String> notes = new ArrayList<String>(Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"));
         for (int i = 0; i < notes.size(); i++) {
             CantusFrame.escalaComboBox.addItem(notes.get(i));
             CantusFrame.notaInicialComboBox.addItem(notes.get(i));
             CantusFrame.notaFinalComboBox.addItem(notes.get(i));
         }
-        //notaInicialComboBox.getSelectedObjects()
+        //Object selectedScale = CantusFrame.escalaComboBox.getSelectedObjects();
+
+        /*
+        Cantus cantus=new Cantus();
+        ArrayList<Integer> ScaleNoteNumbers = cantus.GetScaleNotes(selectedScale.toString());
+        System.out.println("ScaleNotes: " + ScaleNoteNumbers);
+
+        ArrayList<String> ScaleNoteNames =  cantus.GetNoteNames(ScaleNoteNumbers);
+        System.out.println("ScaleNotes: " + ScaleNoteNames );
+        */
     }
 
 }
