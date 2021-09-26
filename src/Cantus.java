@@ -266,10 +266,16 @@ Descarta previa nota mas alta
 
         ArrayList<String> ScaleNoteNames =  cnts.GetNoteNames(ScaleNoteNumbers);
         System.out.println("ScaleNotes: " + ScaleNoteNames );
-/*
-        ArrayList<Integer> actualIntervals = cnts.GetRelativeIntervals(input);
-        System.out.println("actualIntervals: " + actualIntervals);
 
+        ArrayList<Integer> NumericInput = new ArrayList<Integer>();
+        for (int i = 0; i < input.size(); i++) {
+            NumericInput.add(cnts.id(input.get(i) ));
+        }
+
+
+        ArrayList<Integer> actualIntervals = cnts.GetRelativeIntervals(NumericInput);
+        System.out.println("actualIntervals: " + actualIntervals);
+/*
         ArrayList<Integer> NonRepetedNotes = cnts.NoRepetition(input);
         System.out.println("NonRepetedNotes: " + NonRepetedNotes);
 

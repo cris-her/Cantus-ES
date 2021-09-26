@@ -83,6 +83,112 @@ public class MainFrame extends JFrame {
 
             }
         });
+        btn1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn1.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn2.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn3.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn4.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn5.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn6.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn6.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn7.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn7.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn8.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn8.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn9.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn9.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn10.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn10.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn11.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn11.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn12.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn12.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn13.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn13.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn14.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn14.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+        btn15.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn15.getText()));
+                Synth sth = new Synth(notes);
+            }
+        });
+
     }
 
     public static void main(String[] args) {
