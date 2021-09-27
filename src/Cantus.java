@@ -50,33 +50,33 @@ Descarta previa nota mas alta
         return filteredN;
     }
 
-    ArrayList<Integer> GetAbsoluteIntervals(ArrayList<Integer> intervals, ArrayList<Integer> cantus) {
+    ArrayList<Integer> GetAbsoluteIntervals(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredN = new ArrayList<Integer>();
         int last = cantus.get(cantus.size() - 1);
-        for (int i = 0; i < intervals.size(); i++) {
-            filteredN.add(intervals.get(i)-intervals.get(intervals.indexOf(last)));
+        for (int i = 0; i < scale.size(); i++) {
+            filteredN.add(scale.get(i)-last);
         }
         return filteredN;
     }
 
     // "R U L E S"
-    ArrayList<Integer> NoRepetition(ArrayList<Integer> cantus) {
+    ArrayList<Integer> NoRepetition(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
         int last = cantus.get(cantus.size() - 1);
-        for (int i = 0; i < cMajorNotes.size(); i++) {
-            if (cMajorNotes.get(i) != last) {
-                filteredC.add(cMajorNotes.get(i));
+        for (int i = 0; i < scale.size(); i++) {
+            if (scale.get(i) != last) {
+                filteredC.add(scale.get(i));
             }
         }
         return filteredC;
     }
 
-    ArrayList<Integer> NoLeapsLargerThanOctave(ArrayList<Integer> cantus) {
+    ArrayList<Integer> NoLeapsLargerThanOctave(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
-        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(cMajorNotes,cantus);
-        for (int i = 0; i < cMajorNotes.size(); i++) {
+        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(scale,cantus);
+        for (int i = 0; i < scale.size(); i++) {
             if (Math.abs(AbsoluteIntervals.get(i)) <= 12) {
-                filteredC.add(cMajorNotes.get(i));
+                filteredC.add(scale.get(i));
             }
         }
         return filteredC;
@@ -255,8 +255,8 @@ Descarta previa nota mas alta
         //int[] input = {60, 62, 64, 60};
 
         int cantusSize = 8;
-        String cantusScale = "F";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C", "4D", "4E"));
+        String cantusScale = "C";
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C", "4D", "4C"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);
@@ -272,21 +272,22 @@ Descarta previa nota mas alta
             NumericInput.add(cnts.id(input.get(i) ));
         }
 
+        ArrayList<Integer> RelativeIntervals = cnts.GetRelativeIntervals(NumericInput);
+        System.out.println("RelativeIntervals: " + RelativeIntervals);
 
-        ArrayList<Integer> actualIntervals = cnts.GetRelativeIntervals(NumericInput);
-        System.out.println("actualIntervals: " + actualIntervals);
-/*
-        ArrayList<Integer> NonRepetedNotes = cnts.NoRepetition(input);
-        System.out.println("NonRepetedNotes: " + NonRepetedNotes);
-
-        ArrayList<Integer> AbsoluteIntervals = cnts.GetAbsoluteIntervals(cnts.cMajorNotes,input);
+        ArrayList<Integer> AbsoluteIntervals = cnts.GetAbsoluteIntervals(ScaleNoteNumbers,NumericInput);
         System.out.println("AbsoluteIntervals: " + AbsoluteIntervals);
 
+        ArrayList<Integer> NonRepetedNotes = cnts.NoRepetition(ScaleNoteNumbers,NumericInput);
+        System.out.println("NonRepetedNotes: " + NonRepetedNotes);
+
+        ArrayList<Integer> NonLeapsLargerThanOctaveNotes = cnts.NoLeapsLargerThanOctave(NonRepetedNotes, NumericInput);
+        System.out.println("NonLeapsLargerThanOctaveNotes: " + NonLeapsLargerThanOctaveNotes);
+/*
         ArrayList<Integer> NonDissonantLeapsNotes = cnts.NoDissonantLeaps(input);
         System.out.println("NonDissonantLeapsNotes: " + NonDissonantLeapsNotes);
 
-        ArrayList<Integer> NonLeapsLargerThanOctaveNotes = cnts.NoLeapsLargerThanOctave(input);
-        System.out.println("NonLeapsLargerThanOctaveNotes: " + NonLeapsLargerThanOctaveNotes);
+
 
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = cnts.LeadingNoteGoesToTonic(input);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
