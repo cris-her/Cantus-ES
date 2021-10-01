@@ -1,6 +1,24 @@
 import java.util.*;
 public class Cantus {
     /*
+NonRepetedNotes C
+NonLeapsLargerThanOctaveNotes A
+
+NonDissonantLeapsNotes A
+HasUniqueClimaxNotes C
+
+BetweenTwoAndFourLeapsNotes R
+
+NoLongRunsNotes R
+LargerLeapsFollowedByChangeOfDirectionNotes R
+
+
+FinalNoteApproachedByStepNotes B D si es antepen no es B // A
+LeadingNoteGoesToTonicNotes C penu // C
+LastNoteIsTonic ult y primera C
+
+*desactivar de inicio las no tonicas
+------
 Soprano do 4 - sol 5/do 6
 Min 8 max 16
 No 7ma, aum o dim
@@ -82,60 +100,54 @@ Descarta previa nota mas alta
         return filteredC;
     }
 
-    ArrayList<Integer> NoDissonantLeaps(ArrayList<Integer> cantus) {
+    ArrayList<Integer> NoDissonantLeaps(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
-        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(cMajorNotes,cantus);
-        for (int i = 0; i < cMajorNotes.size(); i++) {
-            if (Math.abs(AbsoluteIntervals.get(i)) == 11) {
-                continue;
-            } else if (Math.abs(AbsoluteIntervals.get(i)) == 6) {
+        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(scale,cantus);
+        for (int i = 0; i < scale.size(); i++) {
+            if (Math.abs(AbsoluteIntervals.get(i)) == 11 || Math.abs(AbsoluteIntervals.get(i)) == 10 || Math.abs(AbsoluteIntervals.get(i)) == 6) {
                 continue;
             } else {
-                filteredC.add(cMajorNotes.get(i));
+                filteredC.add(scale.get(i));
+            }
+        }
+        return filteredC;
+    }
+
+    //has_climax
+    ArrayList<Integer> HasUniqueClimax(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        Integer max = Collections.max(cantus);
+        System.out.println("Max: " + max);
+        for (int i = 0; i < scale.size(); i++) {
+            if (scale.get(i) != max) {
+                filteredC.add(scale.get(i));
             }
         }
         return filteredC;
     }
 
     //between_two_and_four_leaps
-    ArrayList<Integer> BetweenTwoAndFourLeaps(ArrayList<Integer> cantus) {
+    ArrayList<Integer> BetweenTwoAndFourLeaps(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
         ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
-        long count = RelativeIntervals.stream().filter(c -> Math.abs(c) > 4).count();
-        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(cMajorNotes,cantus);
-        System.out.println("Count: " + count);
+        long count = RelativeIntervals.stream().filter(interv -> Math.abs(interv) >= 3).count();
+        ArrayList<Integer> AbsoluteIntervals = GetAbsoluteIntervals(scale,cantus);
+        System.out.println("count: " + count);
 
-        if (count > 2) {
-            for (int i = 0; i < cMajorNotes.size(); i++) {
-                if (Math.abs(AbsoluteIntervals.get(i)) < 3) {
-                    filteredC.add(cMajorNotes.get(i));
-                }
-            }
-        } else if (count == 2){
-            for (int i = 0; i < cMajorNotes.size(); i++) {
-                if (Math.abs(AbsoluteIntervals.get(i)) <= 3) {
-                    filteredC.add(cMajorNotes.get(i));
+        if (count == 3) {
+            for (int i = 0; i < scale.size(); i++) {
+                if (Math.abs(AbsoluteIntervals.get(i)) <= 2) {
+                    filteredC.add(scale.get(i));
                 }
             }
         } else {
-            filteredC = cMajorNotes;
+            filteredC = scale;
         }
 
         return filteredC;
     }
 
-    //has_climax
-    ArrayList<Integer> HasUniqueClimax(ArrayList<Integer> cantus) {
-        ArrayList<Integer> filteredC = new ArrayList<Integer>();
-        Integer max = Collections.max(cantus);
-        System.out.println("Max: " + max);
-        for (int i = 0; i < cMajorNotes.size(); i++) {
-            if (cMajorNotes.get(i) != max) {
-                filteredC.add(cMajorNotes.get(i));
-            }
-        }
-        return filteredC;
-    }
+
     //changes_direction_several_times
     //no_note_repeated_too_often
     //final_note_approached_by_step
@@ -256,7 +268,7 @@ Descarta previa nota mas alta
 
         int cantusSize = 8;
         String cantusScale = "C";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C", "4D", "4C"));
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D", "4C", "4F", "4C"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);
@@ -283,26 +295,25 @@ Descarta previa nota mas alta
 
         ArrayList<Integer> NonLeapsLargerThanOctaveNotes = cnts.NoLeapsLargerThanOctave(NonRepetedNotes, NumericInput);
         System.out.println("NonLeapsLargerThanOctaveNotes: " + NonLeapsLargerThanOctaveNotes);
-/*
-        ArrayList<Integer> NonDissonantLeapsNotes = cnts.NoDissonantLeaps(input);
+
+        ArrayList<Integer> NonDissonantLeapsNotes = cnts.NoDissonantLeaps(NonLeapsLargerThanOctaveNotes, NumericInput);
         System.out.println("NonDissonantLeapsNotes: " + NonDissonantLeapsNotes);
 
+        ArrayList<Integer> HasUniqueClimaxNotes = cnts.HasUniqueClimax(NonDissonantLeapsNotes, NumericInput);
+        System.out.println("HasUniqueClimaxNotes: " + HasUniqueClimaxNotes);
 
+        ArrayList<Integer> BetweenTwoAndFourLeapsNotes = cnts.BetweenTwoAndFourLeaps(HasUniqueClimaxNotes, NumericInput);
+        System.out.println("BetweenTwoAndFourLeapsNotes: " + BetweenTwoAndFourLeapsNotes);
 
+/*
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = cnts.LeadingNoteGoesToTonic(input);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
 
         ArrayList<Integer> FinalNoteApproachedByStepNotes = cnts.FinalNoteApproachedByStep(input, 0);
         System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
 
-        ArrayList<Integer> HasUniqueClimaxNotes = cnts.HasUniqueClimax(input);
-        System.out.println("HasUniqueClimaxNotes: " + HasUniqueClimaxNotes);
-
         ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = cnts.LargerLeapsFollowedByChangeOfDirection(input);
         System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
-
-        ArrayList<Integer> BetweenTwoAndFourLeapsNotes = cnts.BetweenTwoAndFourLeaps(input);
-        System.out.println("BetweenTwoAndFourLeapsNotes: " + BetweenTwoAndFourLeapsNotes);
 
         ArrayList<Integer> NoLongRunsNotes = cnts.NoLongRuns(input);
         System.out.println("NoLongRunsNotes: " + NoLongRunsNotes);
