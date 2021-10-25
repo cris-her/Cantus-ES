@@ -1,3 +1,5 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.*;
 public class Cantus {
     /*
@@ -147,6 +149,60 @@ Descarta previa nota mas alta
         return filteredC;
     }
 
+    int CheckLongRun(ArrayList<Integer> intervals) {
+        System.out.println(intervals);
+        ArrayList<Integer> myLast4Intervals = new ArrayList<Integer>( intervals.subList(intervals.size()-4, intervals.size()) );
+        long countP = myLast4Intervals.stream().filter(interv -> interv >= 1 && interv <= 2).count();
+        System.out.println(countP);
+        long countN = myLast4Intervals.stream().filter(interv -> interv <= -1 && interv >= -2).count();
+        System.out.println(countN);
+
+        if (countP == 3)
+        {
+            return 0;
+        }
+        else if (countN == 3)
+        {
+            return 1;
+        }
+        else
+        {
+            return 2;
+        }
+
+    }
+
+    //no_long_runs
+    ArrayList<Integer> NoLongRuns(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
+
+        if (cantus.size() >= 4) {
+            int result = CheckLongRun(RelativeIntervals);
+            //positivos
+            if (result == 0) {
+                for (int i = 0; i < scale.size(); i++) {
+                    if (scale.get(i) < cantus.get(cantus.size() - 1)) { //cambia de direccion
+                        filteredC.add(scale.get(i));
+                    }
+                }
+            //negativos
+            }else if (result == 1){
+                for (int i = 0; i < scale.size(); i++) {
+                    if (scale.get(i) > cantus.get(cantus.size() - 1)) { //cambia de direccion
+                        filteredC.add(scale.get(i));
+                    }
+                }
+            } else {
+                filteredC = scale;
+            }
+        } else {
+            filteredC = scale;
+        }
+
+        return filteredC;
+    }
+
 
     //changes_direction_several_times
     //no_note_repeated_too_often
@@ -206,32 +262,7 @@ Descarta previa nota mas alta
     //no_more_than_two_consecutive_leaps_in_same_direction
     //no_same_two_intervals_in_a_row
     //no_noodling
-    //no_long_runs
-    ArrayList<Integer> NoLongRuns(ArrayList<Integer> cantus) {
-        ArrayList<Integer> filteredC = new ArrayList<Integer>();
-        ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
-        if (cantus.size() >= 5) {
-            if (RelativeIntervals.get(RelativeIntervals.size()-1) >= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-2) >= 0 && RelativeIntervals.get(RelativeIntervals.size()-3) >= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-4) >= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-5) >= 0 ) {
-                for (int i = 0; i < cMajorNotes.size(); i++) {
-                    if (cMajorNotes.get(i) < cantus.get(cantus.size() - 1)) {
-                        filteredC.add(cMajorNotes.get(i));
-                    }
-                }
-            }else if (RelativeIntervals.get(RelativeIntervals.size()-1) <= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-2) <= 0 && RelativeIntervals.get(RelativeIntervals.size()-3) <= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-4) <= 0 &&  RelativeIntervals.get(RelativeIntervals.size()-5) <= 0 ){
-                for (int i = 0; i < cMajorNotes.size(); i++) {
-                    if (cMajorNotes.get(i) > cantus.get(cantus.size() - 1)) {
-                        filteredC.add(cMajorNotes.get(i));
-                    }
-                }
-            } else {
-                filteredC = cMajorNotes;
-            }
-        } else {
-            filteredC = cMajorNotes;
-        }
 
-        return filteredC;
-    }
     //no_unresolved_melodic_tension
     //no_sequences
 
@@ -268,7 +299,7 @@ Descarta previa nota mas alta
 
         int cantusSize = 8;
         String cantusScale = "C";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D", "4C", "4F", "4C"));
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("5C","4B", "4A"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);
@@ -305,7 +336,11 @@ Descarta previa nota mas alta
         ArrayList<Integer> BetweenTwoAndFourLeapsNotes = cnts.BetweenTwoAndFourLeaps(HasUniqueClimaxNotes, NumericInput);
         System.out.println("BetweenTwoAndFourLeapsNotes: " + BetweenTwoAndFourLeapsNotes);
 
+        ArrayList<Integer> NoLongRunsNotes = cnts.NoLongRuns(BetweenTwoAndFourLeapsNotes, NumericInput);
+        System.out.println("NoLongRunsNotes: " + NoLongRunsNotes);
+
 /*
+
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = cnts.LeadingNoteGoesToTonic(input);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
 
@@ -315,8 +350,7 @@ Descarta previa nota mas alta
         ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = cnts.LargerLeapsFollowedByChangeOfDirection(input);
         System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
 
-        ArrayList<Integer> NoLongRunsNotes = cnts.NoLongRuns(input);
-        System.out.println("NoLongRunsNotes: " + NoLongRunsNotes);
+
 
  */
     }
