@@ -256,9 +256,9 @@ Descarta previa nota mas alta
         System.out.println(closestTonic );
         if (cantusSize - 3 == cantus.size()) {
             //antepentul
-            for (int i = 0; i < snn.size(); i++) {
-                if (snn.get(i) < closestTonic - 2 || snn.get(i) > closestTonic + 2) {
-                    filteredC.add(snn.get(i));
+            for (int i = 0; i < scale.size(); i++) {
+                if (scale.get(i) != snn.get(1) && scale.get(i) != snn.get(6) && scale.get(i) != snn.get(13)) {
+                    filteredC.add(scale.get(i));
                 }
             }
 
@@ -362,12 +362,15 @@ Descarta previa nota mas alta
 
         ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = LargerLeapsFollowedByChangeOfDirection(NoLongRunsNotes, NumericInput);
         System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
+        //
 
-        ArrayList<Integer> FinalNoteApproachedByStepNotes = FinalNoteApproachedByStep(NoLongRunsNotes, NumericInput, ScaleNoteNumbers, cantusSize);
+        ArrayList<Integer> FinalNoteApproachedByStepNotes = FinalNoteApproachedByStep(LargerLeapsFollowedByChangeOfDirectionNotes, NumericInput, ScaleNoteNumbers, cantusSize);
         System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
 
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = LeadingNoteGoesToTonic(FinalNoteApproachedByStepNotes, NumericInput, ScaleNoteNumbers);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
+
+//
 
         ArrayList<Integer> LastNoteIsTonicNotes = LastNoteIsTonic(LeadingNoteGoesToTonicNotes, NumericInput, ScaleNoteNumbers, cantusSize);
         System.out.println("LastNoteIsTonicNotes: " + LastNoteIsTonicNotes);
@@ -380,7 +383,7 @@ Descarta previa nota mas alta
 
         int cantusSize = 8;
         String cantusScale = "C";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D"));
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4F","4E", "4D", "4E"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);

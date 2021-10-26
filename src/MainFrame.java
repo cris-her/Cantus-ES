@@ -86,23 +86,47 @@ public class MainFrame extends JFrame {
                             JButtons.get(i).setEnabled(true);
                         }
                     }
-
                 }
+
+                if (cantusSize == currentCantusFirmus.size()) {
+                    for (int i = 0; i < JButtons.size(); i++) {
+                        JButtons.get(i).setEnabled(false);
+                    }
+                    recomendarButton.setEnabled(false);
+                }
+
             }
         });
 
         reiniciarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                notaSeleccionada.setText("");
                 cantusLabel.setText("");
+                currentCantusFirmus = new ArrayList<Integer>();
+                ArrayList<JButton> JButtons = new ArrayList<JButton>(Arrays.asList(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15));
+                for (int i = 0; i < JButtons.size(); i++) {
+                    JButtons.get(i).setEnabled(false);
+                }
+                btn1.setEnabled(true);
+                btn8.setEnabled(true);
+                btn15.setEnabled(true);
+                recomendarButton.setEnabled(false);
+                longitudComboBox.setEnabled(true);
+                escalaComboBox.setEnabled(true);
+
+
             }
         });
 
         escucharButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<String> notes = new ArrayList<String>(Arrays.asList("6D","6C#","6E","6G"));
-                Synth sth = new Synth(notes);
+
+                Cantus cts=new Cantus();
+                ArrayList<String> snnames =  cts.GetNoteNames(currentCantusFirmus);
+                System.out.println( snnames);
+                Synth sth = new Synth(snnames);
             }
         });
 
