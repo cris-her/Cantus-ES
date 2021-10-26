@@ -49,7 +49,7 @@ Descarta previa nota mas alta
     }
 
 
-    ArrayList<Integer> GetScaleNotes(String note) { //C
+    public ArrayList<Integer> GetScaleNotes(String note) { //C
         ArrayList<Integer> filteredN = new ArrayList<Integer>();
         int startNote = id(4+note); //60
         for (int i = 0; i < majorIntervals.size(); i++) { //0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24
@@ -318,13 +318,13 @@ Descarta previa nota mas alta
 
     public int cantusSize = 8;
     //Scale cMajor = new Scale(0, majorIntervals);
-    private List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
-    private int id(String note)
+    public List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
+    public int id(String note)
     {
         int octave = Integer.parseInt(note.substring(0, 1));
         return notes.indexOf(note.substring(1)) + 12 * octave + 12;
     }
-    private String note(int id)
+    public String note(int id)
     {
         int octave = (id - 12) / 12;
         String note = notes.get( (id - 12) % 12 );
@@ -340,12 +340,47 @@ Descarta previa nota mas alta
         return ScaleNoteNames;
     }
 
+    public ArrayList<Integer> Recommend(ArrayList<Integer> scale, ArrayList<Integer> NumericInput, ArrayList<Integer> ScaleNoteNumbers, int cantusSize)
+    {
+        ArrayList<Integer> NonRepetedNotes = NoRepetition(ScaleNoteNumbers,NumericInput);
+        System.out.println("NonRepetedNotes: " + NonRepetedNotes);
+
+        ArrayList<Integer> NonLeapsLargerThanOctaveNotes = NoLeapsLargerThanOctave(NonRepetedNotes, NumericInput);
+        System.out.println("NonLeapsLargerThanOctaveNotes: " + NonLeapsLargerThanOctaveNotes);
+
+        ArrayList<Integer> NonDissonantLeapsNotes = NoDissonantLeaps(NonLeapsLargerThanOctaveNotes, NumericInput);
+        System.out.println("NonDissonantLeapsNotes: " + NonDissonantLeapsNotes);
+
+        ArrayList<Integer> HasUniqueClimaxNotes = HasUniqueClimax(NonDissonantLeapsNotes, NumericInput);
+        System.out.println("HasUniqueClimaxNotes: " + HasUniqueClimaxNotes);
+
+        ArrayList<Integer> BetweenTwoAndFourLeapsNotes = BetweenTwoAndFourLeaps(HasUniqueClimaxNotes, NumericInput);
+        System.out.println("BetweenTwoAndFourLeapsNotes: " + BetweenTwoAndFourLeapsNotes);
+
+        ArrayList<Integer> NoLongRunsNotes = NoLongRuns(BetweenTwoAndFourLeapsNotes, NumericInput);
+        System.out.println("NoLongRunsNotes: " + NoLongRunsNotes);
+
+        ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = LargerLeapsFollowedByChangeOfDirection(NoLongRunsNotes, NumericInput);
+        System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
+
+        ArrayList<Integer> FinalNoteApproachedByStepNotes = FinalNoteApproachedByStep(NoLongRunsNotes, NumericInput, ScaleNoteNumbers, cantusSize);
+        System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
+
+        ArrayList<Integer> LeadingNoteGoesToTonicNotes = LeadingNoteGoesToTonic(FinalNoteApproachedByStepNotes, NumericInput, ScaleNoteNumbers);
+        System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
+
+        ArrayList<Integer> LastNoteIsTonicNotes = LastNoteIsTonic(LeadingNoteGoesToTonicNotes, NumericInput, ScaleNoteNumbers, cantusSize);
+        System.out.println("LastNoteIsTonicNotes: " + LastNoteIsTonicNotes);
+
+        return LastNoteIsTonicNotes;
+    }
+
     public static void main(String[] args) {
         //int[] input = {60, 62, 64, 60};
 
         int cantusSize = 8;
         String cantusScale = "C";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D", "4F", "4E", "4F","4A", "5B"));
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);
@@ -367,6 +402,9 @@ Descarta previa nota mas alta
         ArrayList<Integer> AbsoluteIntervals = cnts.GetAbsoluteIntervals(ScaleNoteNumbers,NumericInput);
         System.out.println("AbsoluteIntervals: " + AbsoluteIntervals);
 
+        ArrayList<Integer> Recommendation = cnts.Recommend(ScaleNoteNumbers, NumericInput, ScaleNoteNumbers, cantusSize);
+        System.out.println("Recommendation: " + Recommendation);
+        /*
         ArrayList<Integer> NonRepetedNotes = cnts.NoRepetition(ScaleNoteNumbers,NumericInput);
         System.out.println("NonRepetedNotes: " + NonRepetedNotes);
 
@@ -396,5 +434,7 @@ Descarta previa nota mas alta
 
         ArrayList<Integer> LastNoteIsTonicNotes = cnts.LastNoteIsTonic(LeadingNoteGoesToTonicNotes, NumericInput, ScaleNoteNumbers, cantusSize);
         System.out.println("LastNoteIsTonicNotes: " + LastNoteIsTonicNotes);
+
+        */
     }
 }
