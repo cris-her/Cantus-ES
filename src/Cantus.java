@@ -203,49 +203,83 @@ Descarta previa nota mas alta
         return filteredC;
     }
 
-
-    //changes_direction_several_times
-    //no_note_repeated_too_often
-    //final_note_approached_by_step
-    ArrayList<Integer> FinalNoteApproachedByStep(ArrayList<Integer> cantus, int lastNote) {
-        ArrayList<Integer> filteredC = new ArrayList<Integer>();
-
-        if (cantusSize - 2 == cantus.size()) {
-            if (lastNote == 0) {
-                filteredC.add(2);
-            } else {
-                filteredC.add(11);
-                filteredC.add(14);
-            }
-        } else {
-            filteredC = cMajorNotes;
-        }
-        return filteredC;
-    }
-
     //larger_leaps_followed_by_change_of_direction
-    ArrayList<Integer> LargerLeapsFollowedByChangeOfDirection(ArrayList<Integer> cantus) {
+    ArrayList<Integer> LargerLeapsFollowedByChangeOfDirection(ArrayList<Integer> scale, ArrayList<Integer> cantus) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
         ArrayList<Integer> RelativeIntervals = GetRelativeIntervals(cantus);
 
-        if (RelativeIntervals.get(RelativeIntervals.size()-1) > 4) {
-            for (int i = 0; i < cMajorNotes.size(); i++) {
-                if (cMajorNotes.get(i) < cantus.get(cantus.size() - 1)) {
-                    filteredC.add(cMajorNotes.get(i));
+        if (RelativeIntervals.get(RelativeIntervals.size()-1) >= 3) {
+            for (int i = 0; i < scale.size(); i++) {
+                if (scale.get(i) < cantus.get(cantus.size() - 1) && scale.get(i) >= cantus.get(cantus.size() - 1) - 2) {
+                    filteredC.add(scale.get(i));
                 }
             }
-        }else if (RelativeIntervals.get(RelativeIntervals.size()-1) < -4){
-            for (int i = 0; i < cMajorNotes.size(); i++) {
-                if (cMajorNotes.get(i) > cantus.get(cantus.size() - 1)) {
-                    filteredC.add(cMajorNotes.get(i));
+        }else if (RelativeIntervals.get(RelativeIntervals.size()-1) <= -3){
+            for (int i = 0; i < scale.size(); i++) {
+                if (scale.get(i) > cantus.get(cantus.size() - 1) && scale.get(i) <= cantus.get(cantus.size() - 1) + 2) {
+                    filteredC.add(scale.get(i));
                 }
             }
         } else {
-            filteredC = cMajorNotes;
+            filteredC = scale;
         }
 
         return filteredC;
     }
+    //changes_direction_several_times
+    //no_note_repeated_too_often
+
+    int ClosestTonic(ArrayList<Integer> cantus, ArrayList<Integer> snn) {
+        ArrayList<Integer> aux = new ArrayList<Integer>();
+        aux.add(Math.abs( snn.get(0) - cantus.get(cantus.size()-1)));
+        aux.add(Math.abs( snn.get(7) - cantus.get(cantus.size()-1)));
+        aux.add(Math.abs( snn.get(14) - cantus.get(cantus.size()-1)));
+        Integer min = Collections.min(aux);
+        int tonic = aux.indexOf(min);
+        if (tonic == 0)
+        {
+            return snn.get(0);
+        } else if (tonic == 1)
+        {
+            return snn.get(7);
+        }
+        else
+        {
+            return snn.get(14);
+        }
+    }
+    //FinalNoteApproachedByStepNotes B D si es antepen no es B // A
+    //final_note_approached_by_step
+    ArrayList<Integer> FinalNoteApproachedByStep(ArrayList<Integer> scale, ArrayList<Integer> cantus, ArrayList<Integer> snn, int cantusSize) {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        int closestTonic = ClosestTonic( cantus, snn);
+        System.out.println(closestTonic );
+        if (cantusSize - 3 == cantus.size()) {
+            //antepentul
+            for (int i = 0; i < snn.size(); i++) {
+                if (snn.get(i) < closestTonic - 2 || snn.get(i) > closestTonic + 2) {
+                    filteredC.add(snn.get(i));
+                }
+            }
+
+        } else if (cantusSize - 2 == cantus.size())
+        {
+            System.out.println(snn);
+            //penul
+            for (int i = 0; i < snn.size(); i++) {
+                if (snn.get(i) >= closestTonic - 2 && snn.get(i) <= closestTonic + 2 && snn.get(i) != closestTonic) {
+                    filteredC.add(snn.get(i));
+                }
+            }
+
+        }
+        else {
+            filteredC = scale;
+        }
+        return filteredC;
+    }
+
+
 
     //leading_note_goes_to_tonic
     ArrayList<Integer> LeadingNoteGoesToTonic(ArrayList<Integer> cantus) {
@@ -299,7 +333,7 @@ Descarta previa nota mas alta
 
         int cantusSize = 8;
         String cantusScale = "C";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("5C","4B", "4A"));
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D", "4F", "4E", "4F","4G"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);
@@ -339,16 +373,20 @@ Descarta previa nota mas alta
         ArrayList<Integer> NoLongRunsNotes = cnts.NoLongRuns(BetweenTwoAndFourLeapsNotes, NumericInput);
         System.out.println("NoLongRunsNotes: " + NoLongRunsNotes);
 
+        ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = cnts.LargerLeapsFollowedByChangeOfDirection(NoLongRunsNotes, NumericInput);
+        System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
+
+        ArrayList<Integer> FinalNoteApproachedByStepNotes = cnts.FinalNoteApproachedByStep(NoLongRunsNotes, NumericInput, ScaleNoteNumbers, cantusSize);
+        System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
+
 /*
 
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = cnts.LeadingNoteGoesToTonic(input);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
 
-        ArrayList<Integer> FinalNoteApproachedByStepNotes = cnts.FinalNoteApproachedByStep(input, 0);
-        System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
 
-        ArrayList<Integer> LargerLeapsFollowedByChangeOfDirectionNotes = cnts.LargerLeapsFollowedByChangeOfDirection(input);
-        System.out.println("LargerLeapsFollowedByChangeOfDirectionNotes: " + LargerLeapsFollowedByChangeOfDirectionNotes);
+
+
 
 
 
