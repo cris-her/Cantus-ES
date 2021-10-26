@@ -282,14 +282,15 @@ Descarta previa nota mas alta
 
 
     //leading_note_goes_to_tonic
-    ArrayList<Integer> LeadingNoteGoesToTonic(ArrayList<Integer> cantus) {
+    ArrayList<Integer> LeadingNoteGoesToTonic(ArrayList<Integer> scale, ArrayList<Integer> cantus, ArrayList<Integer> snn) {
         ArrayList<Integer> filteredC = new ArrayList<Integer>();
         int last = cantus.get(cantus.size() - 1);
 
-        if (last == 11) {
-            filteredC.add(12);
+        if (last == snn.get(6) || last == snn.get(13)) {
+
+            filteredC.add(ClosestTonic( cantus, snn));
         } else {
-            filteredC = cMajorNotes;
+            filteredC = scale;
         }
         return filteredC;
     }
@@ -299,6 +300,17 @@ Descarta previa nota mas alta
 
     //no_unresolved_melodic_tension
     //no_sequences
+    ArrayList<Integer> LastNoteIsTonic(ArrayList<Integer> scale, ArrayList<Integer> cantus, ArrayList<Integer> snn, int cantusSize)
+    {
+        ArrayList<Integer> filteredC = new ArrayList<Integer>();
+        if (cantusSize - 1 == cantus.size())
+        {
+            filteredC.add(ClosestTonic( cantus, snn));
+        } else {
+            filteredC = scale;
+        }
+        return filteredC;
+    }
 
     public ArrayList<Integer> majorIntervals = new ArrayList<Integer>(Arrays.asList(0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24));
 
@@ -333,7 +345,7 @@ Descarta previa nota mas alta
 
         int cantusSize = 8;
         String cantusScale = "C";
-        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D", "4F", "4E", "4F","4G"));
+        ArrayList<String> input = new ArrayList<String>(Arrays.asList("4C","4D", "4F", "4E", "4F","4A", "5B"));
         Cantus cnts = new Cantus();
         //nota inicial mostrada a escoger, nota final por recomendacion
         System.out.println("Cantus: " + input);
@@ -379,17 +391,10 @@ Descarta previa nota mas alta
         ArrayList<Integer> FinalNoteApproachedByStepNotes = cnts.FinalNoteApproachedByStep(NoLongRunsNotes, NumericInput, ScaleNoteNumbers, cantusSize);
         System.out.println("FinalNoteApproachedByStepNotes: " + FinalNoteApproachedByStepNotes);
 
-/*
-
-        ArrayList<Integer> LeadingNoteGoesToTonicNotes = cnts.LeadingNoteGoesToTonic(input);
+        ArrayList<Integer> LeadingNoteGoesToTonicNotes = cnts.LeadingNoteGoesToTonic(FinalNoteApproachedByStepNotes, NumericInput, ScaleNoteNumbers);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
 
-
-
-
-
-
-
- */
+        ArrayList<Integer> LastNoteIsTonicNotes = cnts.LastNoteIsTonic(LeadingNoteGoesToTonicNotes, NumericInput, ScaleNoteNumbers, cantusSize);
+        System.out.println("LastNoteIsTonicNotes: " + LastNoteIsTonicNotes);
     }
 }
