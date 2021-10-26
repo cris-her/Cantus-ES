@@ -43,6 +43,8 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 //tfname.getText
                 //String notes = "6D, 6C#, 6E, 6G";
+                if (Objects.equals(notaSeleccionada.getText(), "")) { return; }
+
                 longitudComboBox.setEnabled(false);
                 escalaComboBox.setEnabled(false);
                 Cantus cantus=new Cantus();

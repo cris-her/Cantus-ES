@@ -369,7 +369,6 @@ Descarta previa nota mas alta
 
         ArrayList<Integer> LeadingNoteGoesToTonicNotes = LeadingNoteGoesToTonic(FinalNoteApproachedByStepNotes, NumericInput, ScaleNoteNumbers);
         System.out.println("LeadingNoteGoesToTonicNotes: " + LeadingNoteGoesToTonicNotes);
-
 //
 
         ArrayList<Integer> LastNoteIsTonicNotes = LastNoteIsTonic(LeadingNoteGoesToTonicNotes, NumericInput, ScaleNoteNumbers, cantusSize);
