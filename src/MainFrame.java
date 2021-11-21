@@ -7,31 +7,14 @@ import java.util.Objects;
 
 public class MainFrame extends JFrame {
     private JPanel mainPanel;
-    private JComboBox longitudComboBox;
-    private JComboBox escalaComboBox;
-    private JButton escucharButton;
-    private JButton recomendarButton;
-    private JButton reiniciarButton;
-    private JButton btn4;
-    private JButton btn3;
-    private JButton btn2;
-    private JButton btn1;
-    private JButton btn5;
-    private JButton btn6;
-    private JButton btn8;
-    private JButton btn9;
-    private JButton btn10;
-    private JButton btn11;
-    private JButton btn12;
-    private JButton btn13;
-    private JLabel cantusLabel;
-    private JButton btn7;
+    private JComboBox longitudComboBox, escalaComboBox;
+    private JButton escucharButton, recomendarButton, reiniciarButton;
+    private JLabel cantusLabel, notaSeleccionada;
+    private JButton btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12, btn13, btn14, btn15;
     private JButton btn;
-    private JButton btn14;
-    private JButton btn15;
-    private JLabel notaSeleccionada;
+    public static ArrayList<Integer> cantusFirmusActual = new ArrayList<Integer>();
 
-    public MainFrame(){
+    public MainFrame() {
         setContentPane(mainPanel);
         setTitle("Cantus firmus - Sistema experto");
         setSize(900, 300);
@@ -41,43 +24,29 @@ public class MainFrame extends JFrame {
         recomendarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //tfname.getText
-                //String notes = "6D, 6C#, 6E, 6G";
                 if (Objects.equals(notaSeleccionada.getText(), "")) { return; }
 
                 longitudComboBox.setEnabled(false);
                 escalaComboBox.setEnabled(false);
                 Cantus cantus=new Cantus();
                 cantusLabel.setText(cantusLabel.getText() + " " + notaSeleccionada.getText());
-
-                currentCantusFirmus.add(cantus.id(notaSeleccionada.getText() ));
-
+                cantusFirmusActual.add(cantus.id(notaSeleccionada.getText() ));
                 String value = escalaComboBox.getSelectedItem().toString();
-                //System.out.println(value);
-
-                ArrayList<Integer> ScaleNoteNumbers = cantus.GetScaleNotes(value);
-                //System.out.println("ScaleNotes: " + ScaleNoteNumbers);
-                ArrayList<String> ScaleNoteNames =  cantus.GetNoteNames(ScaleNoteNumbers);
-                //System.out.println("ScaleNotes: " + ScaleNoteNames );
-
+                ArrayList<Integer> ScaleNoteNumbers = cantus.obtenerNumeros(value);
                 int cantusSize = Integer.parseInt(longitudComboBox.getSelectedItem().toString());;
-                //System.out.println(cantusSize);
                 ArrayList<String> input = new ArrayList<String>(Arrays.asList(notaSeleccionada.getText()));
                 System.out.println(input);
-                //nota inicial mostrada a escoger, nota final por recomendacion
-                //System.out.println("Cantus: " + input);
-                // selected c major scale, transposed to c major then back to original
 
                 ArrayList<Integer> NumericInput = new ArrayList<Integer>();
                 for (int i = 0; i < input.size(); i++) {
                     NumericInput.add(cantus.id(input.get(i) ));
                 }
 
-                ArrayList<Integer> Recommendation = cantus.Recommend(ScaleNoteNumbers, currentCantusFirmus, ScaleNoteNumbers, cantusSize);
+                ArrayList<Integer> Recommendation = cantus.recomendar(ScaleNoteNumbers, cantusFirmusActual, ScaleNoteNumbers, cantusSize);
                 System.out.println("Recommendation: " + Recommendation);
                 notaSeleccionada.setText("");
 
-                ArrayList<String> RecommendationNoteNames =  cantus.GetNoteNames(Recommendation);
+                ArrayList<String> RecommendationNoteNames =  cantus.obtenerNombres(Recommendation);
                 System.out.println("RecommendationNoteNames: " + RecommendationNoteNames);
                 ArrayList<JButton> JButtons = new ArrayList<JButton>(Arrays.asList(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15));
 
@@ -90,22 +59,24 @@ public class MainFrame extends JFrame {
                     }
                 }
 
-                if (cantusSize == currentCantusFirmus.size()) {
+                if (cantusSize == cantusFirmusActual.size()) {
                     for (int i = 0; i < JButtons.size(); i++) {
                         JButtons.get(i).setEnabled(false);
                     }
                     recomendarButton.setEnabled(false);
                 }
 
+                escucharButton.setEnabled(true);
+                recomendarButton.setEnabled(false);
+
             }
         });
-
         reiniciarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 notaSeleccionada.setText("");
                 cantusLabel.setText("");
-                currentCantusFirmus = new ArrayList<Integer>();
+                cantusFirmusActual = new ArrayList<Integer>();
                 ArrayList<JButton> JButtons = new ArrayList<JButton>(Arrays.asList(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15));
                 for (int i = 0; i < JButtons.size(); i++) {
                     JButtons.get(i).setEnabled(false);
@@ -116,33 +87,26 @@ public class MainFrame extends JFrame {
                 recomendarButton.setEnabled(false);
                 longitudComboBox.setEnabled(true);
                 escalaComboBox.setEnabled(true);
-
+                escucharButton.setEnabled(false);
 
             }
         });
-
         escucharButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                Cantus cts=new Cantus();
-                ArrayList<String> snnames =  cts.GetNoteNames(currentCantusFirmus);
+                ArrayList<String> snnames =  Cantus.obtenerNombres(cantusFirmusActual);
                 System.out.println( snnames);
-                Synth sth = new Synth(snnames);
+                Cantus.tocar(snnames);
             }
         });
-
         escalaComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //String.valueOf(Math.random())
-                //ArrayList<String> notes = new ArrayList<String>(Arrays.asList("C","D","E","F","G","A","B","C","D","E","F","G","Z", "X", "Y"));
                 String value = escalaComboBox.getSelectedItem().toString();
                 System.out.println(value);
-                Cantus cantus=new Cantus();
-                ArrayList<Integer> ScaleNoteNumbers = cantus.GetScaleNotes(value);
+                ArrayList<Integer> ScaleNoteNumbers = Cantus.obtenerNumeros(value);
                 System.out.println("ScaleNotes: " + ScaleNoteNumbers);
-                ArrayList<String> ScaleNoteNames =  cantus.GetNoteNames(ScaleNoteNumbers);
+                ArrayList<String> ScaleNoteNames =  Cantus.obtenerNombres(ScaleNoteNumbers);
                 System.out.println("ScaleNotes: " + ScaleNoteNames );
 
                 ArrayList<JButton> JButtons = new ArrayList<JButton>(Arrays.asList(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,btn10,btn11,btn12,btn13,btn14,btn15));
@@ -150,16 +114,13 @@ public class MainFrame extends JFrame {
                 for (int i = 0; i < JButtons.size(); i++) {
                     JButtons.get(i).setText(ScaleNoteNames.get(i));
                 }
-
-                //btn3.setEnabled(true);
             }
         });
         btn1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn1.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn1.getText());
                 recomendarButton.setEnabled(true);
             }
@@ -168,62 +129,61 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn2.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn2.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn3.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn3.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn4.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn4.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn5.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn5.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn5.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn6.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn6.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn6.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn7.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn7.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn7.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn8.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn8.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn8.getText());
                 recomendarButton.setEnabled(true);
             }
@@ -232,93 +192,74 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn9.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn9.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn10.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn10.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn10.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn11.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn11.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn11.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn12.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn12.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn12.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn13.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn13.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn13.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn14.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn14.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn14.getText());
+                recomendarButton.setEnabled(true);
             }
         });
         btn15.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> notes = new ArrayList<String>(Arrays.asList(btn15.getText()));
-                Synth sth = new Synth(notes);
-
+                Cantus.tocar(notes);
                 notaSeleccionada.setText(btn15.getText());
                 recomendarButton.setEnabled(true);
             }
         });
-
     }
 
-    public static ArrayList<Integer> currentCantusFirmus = new ArrayList<Integer>();
-
-    public static void main(String[] args) {
-        MainFrame CantusFrame = new MainFrame();
+    public static void LlenarComboBoxes(MainFrame obj) {
         for (int i = 8; i <= 16; i++) {
-            CantusFrame.longitudComboBox.addItem(i);
-        }
-        ArrayList<String> notes = new ArrayList<String>(Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"));
-        for (int i = 0; i < notes.size(); i++) {
-            CantusFrame.escalaComboBox.addItem(notes.get(i));
+            obj.longitudComboBox.addItem(i);
         }
 
-
-
-        //Object selectedScale = CantusFrame.escalaComboBox.getSelectedObjects();
-
-        /*
-        Cantus cantus=new Cantus();
-        ArrayList<Integer> ScaleNoteNumbers = cantus.GetScaleNotes(selectedScale.toString());
-        System.out.println("ScaleNotes: " + ScaleNoteNumbers);
-
-        ArrayList<String> ScaleNoteNames =  cantus.GetNoteNames(ScaleNoteNumbers);
-        System.out.println("ScaleNotes: " + ScaleNoteNames );
-        */
+        for (int i = 0; i < Cantus.nomenclatura.size(); i++) {
+            obj.escalaComboBox.addItem(Cantus.nomenclatura.get(i));
+        }
     }
-
 }
